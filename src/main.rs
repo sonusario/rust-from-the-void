@@ -1,3 +1,7 @@
+mod dyn_mut_closures;
+
+use dyn_mut_closures::*;
+
 fn main() {
-    println!("Hello, world!");
+    dyn_mut_closures();
 }
