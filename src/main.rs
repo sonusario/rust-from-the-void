@@ -1,7 +1,7 @@
-mod dyn_mut_closures;
+mod destruct;
 
-use dyn_mut_closures::*;
+use destruct::*;
 
 fn main() {
-    dyn_mut_closures();
+    destruct();
 }

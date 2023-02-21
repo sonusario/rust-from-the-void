@@ -4,6 +4,7 @@
 // patterns the capture different parts of the array given the state of the
 // array.
 //
+// In the first example:
 // Each match pattern accepts an array of at least two elements. Even though
 // there are three elements in the match pattern, the "body" element acts as an
 // aggregate, indicated by the "@ .." syntax. Thus it will result as an empty
@@ -18,8 +19,10 @@
 // I'd like to see if this would be an effective way of aiding in the
 // implementation of a programming language interpreter after tokens have been
 // produced. Several elements could be accepted by a match pattern at once rather
-// than iterating over every token (e.g
-//  `[Token::Number(first), Token::Add, Token::Number(second), rest @ ..] => {...}`
+// than iterating over every token.
+//
+// The second match statement, in the while loop, give a feeling for what could
+// be desired.
 
 pub fn destruct() {
     const X: usize = 4;
@@ -40,4 +43,29 @@ pub fn destruct() {
             println!("First element, {first}, is 3! The body is {body:?}. Last is {last}");
         }
     }
+
+    let mut v: Vec<Token> = Vec::from([
+        Token::Number(3),
+        Token::Add,
+        Token::Number(4),
+        Token::Add,
+        Token::Number(1)]);
+    
+    while v.len() >= 3 {
+        match v[0..3] {
+            [Token::Number(first), Token::Add, Token::Number(second)] => {
+                println!("Matched!");
+                v = [[Token::Number(first + second)].to_vec(), v[3..].to_vec()].concat();
+            }
+            _ => {}
+        }
+    }
+
+    println!("{v:?}");
+}
+
+#[derive(Debug, Clone)]
+enum Token {
+    Number(i32),
+    Add,
 }
