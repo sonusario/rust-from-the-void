@@ -50,18 +50,24 @@ pub fn destruct() {
         Token::Number(4),
         Token::Add,
         Token::Number(1)]);
+
+    for token in &v {
+        match token {
+            Token::Number(n) => print!("{n}"),
+            Token::Add => print!(" + "),
+        }
+    }
     
     while v.len() >= 3 {
         match v[0..3] {
             [Token::Number(first), Token::Add, Token::Number(second)] => {
-                println!("Matched!");
                 v = [[Token::Number(first + second)].to_vec(), v[3..].to_vec()].concat();
             }
             _ => {}
         }
     }
 
-    println!("{v:?}");
+    println!(" = {}", if let Token::Number(n) = v[0] {n} else {panic!("NaN")});
 }
 
 #[derive(Debug, Clone)]
