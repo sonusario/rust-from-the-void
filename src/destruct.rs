@@ -21,7 +21,7 @@
 // produced. Several elements could be accepted by a match pattern at once rather
 // than iterating over every token.
 //
-// The second match statement, in the while loop, give a feeling for what could
+// The second match statement, in the while loop, gives a feeling for what could
 // be desired.
 
 pub fn destruct() {
