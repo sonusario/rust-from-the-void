@@ -47,11 +47,15 @@ pub fn rhombic_dodeca() {
     let x = t.clone();
     t.move_from_to(Z, W);
     println!(
-        "The manhattan distance from {:?} to {:?} is {}",
+        "The manhattan distance from {:?} to {:?} is {}\n",
         x.coord(),
         t.coord(),
         x.distance(t)
     );
+
+    for rc in x.get_all_adjacent() {
+        println!("{:?}", rc.coord());
+    }
 }
 
 #[derive(Clone)]
@@ -133,6 +137,24 @@ impl RCoord {
                 self.coord()
             );
         }
+    }
+
+    fn get_all_adjacent(&self) -> [RCoord; 12] {
+        use RDir::*;
+        [
+            self.get_from_to(W, X),
+            self.get_from_to(W, Y),
+            self.get_from_to(W, Z),
+            self.get_from_to(X, W),
+            self.get_from_to(X, Y),
+            self.get_from_to(X, Z),
+            self.get_from_to(Y, W),
+            self.get_from_to(Y, X),
+            self.get_from_to(Y, Z),
+            self.get_from_to(Z, W),
+            self.get_from_to(Z, X),
+            self.get_from_to(Z, Y),
+        ]
     }
 }
 
