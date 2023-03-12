@@ -1,7 +1,7 @@
-mod destruct;
+mod rhombic_dodeca;
 
-use destruct::*;
+use rhombic_dodeca::*;
 
 fn main() {
-    destruct();
+    rhombic_dodeca();
 }
