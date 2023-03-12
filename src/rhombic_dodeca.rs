@@ -4,8 +4,8 @@
 // rhombic dodecahedral units instead of cubes. This implementation takes cues
 // from "https://www.redblobgames.com/grids/hexagons/"
 //
-// The coordinate systems is built up with "tesseract coordinates", with a
-// struct called RCoord which utilizes w, x, y, and z axes. Moving in a positive
+// The coordinate system is built up with "tesseract coordinates", with a struct
+// called RCoord which utilizes w, x, y, and z axes. Moving in a positive
 // direction along an axis is possible for three adjacent faces. The axis being
 // traversed increases its corresponding coordinate and decreases one of the
 // other three. This satisfies the constraint for every valid coordinate point
@@ -16,8 +16,8 @@
 // "Minecraft-like" games. I've also seen attempts at spherical worlds, which
 // splinter like the bottom of photo spheres as you dig into the world. It would
 // be interesting to see a world built out with rhombic dodecahedrons, where the
-// rotation is more subtle than a 90 degree rotation over the edge of cube
-// planet.
+// rotation is slightly more subtle than a 90 degree rotation over the edge of
+// cube planet.
 
 pub fn rhombic_dodeca() {
     use RDir::*;
@@ -76,12 +76,12 @@ impl RCoord {
         [self.w, self.x, self.y, self.z]
     }
 
-    fn add(&self, rc: RCoord) -> RCoord {
-        RCoord::from([self.w + rc.w, self.x + rc.x, self.y + rc.y, self.z + rc.z])
-    }
-
     fn add_from(&self, a: [i32; 4]) -> RCoord {
         RCoord::from([self.w + a[0], self.x + a[1], self.y + a[2], self.z + a[3]])
+    }
+
+    fn add(&self, rc: RCoord) -> RCoord {
+        self.add_from(rc.coord())
     }
 
     fn neg(&self) -> RCoord {
