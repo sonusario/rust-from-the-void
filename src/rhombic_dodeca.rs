@@ -19,6 +19,8 @@
 // rotation is slightly more subtle than a 90 degree rotation over the edge of
 // cube planet.
 
+use std::cmp::*;
+
 pub fn rhombic_dodeca() {
     use RDir::*;
 
@@ -26,7 +28,7 @@ pub fn rhombic_dodeca() {
     t.as_coord_from([0, 1, -1, 0]);
 
     let x = t.add_from([2, 0, 0, -2]);
-    t = x.add(t.neg());
+    t = x.add(&t.neg());
     println!("{:?}\n", t.coord());
 
     let mut t = RCoord::from([0, 0, 0, 0]);
@@ -46,14 +48,27 @@ pub fn rhombic_dodeca() {
 
     let x = t.clone();
     t.move_from_to(Z, W);
+    t.move_from_to(Y, X);
     println!(
         "The manhattan distance from {:?} to {:?} is {}\n",
         x.coord(),
         t.coord(),
-        x.distance(t)
+        x.distance(&t)
     );
 
     for rc in x.get_all_adjacent() {
+        println!("{:?}", rc.coord());
+    }
+    println!("\n");
+
+    let x = RCoord::from([0, 0, 0, 0]);
+    for rc in x.line_to(&RCoord::from([5, 5, -5, -5])) {
+        println!("{:?}", rc.coord())
+    }
+    println!("\n");
+
+    // Work in progress
+    for rc in x.get_in_range(1) {
         println!("{:?}", rc.coord());
     }
 }
@@ -84,7 +99,7 @@ impl RCoord {
         RCoord::from([self.w + a[0], self.x + a[1], self.y + a[2], self.z + a[3]])
     }
 
-    fn add(&self, rc: RCoord) -> RCoord {
+    fn add(&self, rc: &RCoord) -> RCoord {
         self.add_from(rc.coord())
     }
 
@@ -101,14 +116,14 @@ impl RCoord {
     }
 
     fn move_from_to(&mut self, f: RDir, t: RDir) {
-        self.as_coord(self.get_from_to(f, t));
+        self.as_coord(&self.get_from_to(f, t));
     }
 
     fn distance_from(&self, a: [i32; 4]) -> i32 {
-        self.add(RCoord::from(a).neg()).abs().iter().sum::<i32>() / 2
+        self.add(&RCoord::from(a).neg()).abs().iter().sum::<i32>() / 2
     }
 
-    fn distance(&self, rc: RCoord) -> i32 {
+    fn distance(&self, rc: &RCoord) -> i32 {
         self.distance_from(rc.coord())
     }
 
@@ -121,7 +136,7 @@ impl RCoord {
         self.check()
     }
 
-    fn as_coord(&mut self, rc: RCoord) {
+    fn as_coord(&mut self, rc: &RCoord) {
         self.as_coord_from(rc.coord());
     }
 
@@ -137,6 +152,57 @@ impl RCoord {
                 self.coord()
             );
         }
+    }
+
+    fn lerp_to(&self, rc: &RCoord, t: f64) -> RCoord {
+        let mut x = [
+            lerp(self.w as f64, rc.w as f64, t).round() as i32,
+            lerp(self.x as f64, rc.x as f64, t).round() as i32,
+            lerp(self.y as f64, rc.y as f64, t).round() as i32,
+            lerp(self.z as f64, rc.z as f64, t).round() as i32,
+        ];
+        let y = self.coord();
+        if x.iter().sum::<i32>() != 0 {
+            for i in 0..3 {
+                if x[i] == x[i + 1] {
+                    match x[i].cmp(&y[i]) {
+                        Ordering::Less => x[i] += 1,
+                        Ordering::Equal => {}
+                        Ordering::Greater => x[i] -= 1,
+                    }
+                    break;
+                }
+            }
+        }
+        RCoord::from(x)
+    }
+
+    // The 45 degree diagonals contain duplicate coords at the moment as, unlike
+    // hex coords, rhombic dodecahedral cells at a MH dist. of 2 from each other
+    // can share a vertex.
+    fn line_to(&self, rc: &RCoord) -> Vec<RCoord> {
+        let distance = self.distance(rc);
+        let mut v: Vec<RCoord> = Vec::new();
+        for i in 0..=distance {
+            v.push(self.lerp_to(rc, 1.0 / (distance as f64) * i as f64))
+        }
+
+        v
+    }
+
+    // Work in progress
+    fn get_in_range(&self, range: i32) -> Vec<RCoord> {
+        let mut v: Vec<RCoord> = Vec::new();
+        for x in -range..=range {
+            for y in max(-range, -x - range)..=min(range, -x + range) {
+                for z in max(-range, -x - y - range)..=min(range, -x - y + range) {
+                    let w = -x - y - z;
+                    v.push(self.add(&RCoord::from([w, x, y, z])));
+                }
+            }
+        }
+
+        v
     }
 
     fn get_all_adjacent(&self) -> [RCoord; 12] {
@@ -156,6 +222,10 @@ impl RCoord {
             self.get_from_to(Z, Y),
         ]
     }
+}
+
+fn lerp(a: f64, b: f64, t: f64) -> f64 {
+    a + (b - a) * t
 }
 
 #[derive(Debug)]
