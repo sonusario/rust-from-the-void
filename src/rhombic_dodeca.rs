@@ -69,7 +69,7 @@ pub fn rhombic_dodeca() {
 
     // Work in progress
     for rc in x.get_in_range(1) {
-        println!("{:?}", rc.coord());
+        println!("{:?} is in range", rc.coord());
     }
 }
 
