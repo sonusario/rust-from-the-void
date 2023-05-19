@@ -1,7 +1,7 @@
-mod rhombic_dodeca;
+mod web;
 
-use rhombic_dodeca::*;
+use web::*;
 
 fn main() {
-    rhombic_dodeca();
+    web();
 }
