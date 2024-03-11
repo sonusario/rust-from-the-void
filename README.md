@@ -3,10 +3,12 @@
 A place to keep track of Rust code that I play around with.
 
 To run a module, at the top of `main.rs` write:
+
+```rust
+ mod module_name;
+ use module_name::*;
 ```
- mod <module-name>;
- use <module-name>::*;
-```
+
 In `fn main() { ... }` write: `<module-name>();`
 
 Module names can be found in the `./src/` folder, each being called

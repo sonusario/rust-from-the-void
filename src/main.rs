@@ -1,7 +1,7 @@
-mod web;
+mod destruct;
 
-use web::*;
+use destruct::*;
 
 fn main() {
-    web();
+    destruct();
 }

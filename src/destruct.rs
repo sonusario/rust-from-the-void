@@ -68,6 +68,37 @@ pub fn destruct() {
     }
 
     println!(" = {}", if let Token::Number(n) = v[0] {n} else {panic!("NaN")});
+
+
+    let s = String::from("hello world and all its inhabitants");
+    match &s.split_whitespace().collect::<Vec<&str>>()[..] {
+        [first, body @ .., last] => {
+            println!("\nfirst: {},\nbody: {:?},\nlast: {}\n", first, body, last)
+        }
+        _ => println!("not matched"),
+    }
+
+    let s = String::from("hello world and all its inhabitants");
+    match &s.split_whitespace().collect::<Vec<&str>>()[..] {
+        [first, rest @ ..] => println!("first: {},\nrest: {:?}\n", first, rest),
+        _ => println!("not matched"),
+    }
+
+    let a = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+    match &a[..] {
+        [[a, b, c], [d, e, f], r @ ..] => println!(
+            "a: {a}, b: {b}, c: {c}, d: {d}, e: {e}, f: {f}, REST: {r:?}",
+        ),
+        _ => println!("not matched"),
+    }
+
+    let v = vec![];
+    match &*v {
+        [_first, _second] => println!("First match arm"),
+        [_first, .., 3] => println!("Second match arm"),
+        [..] => println!("Third match arm"),
+        //_ => println!("Last match arm"), unreachable
+    }
 }
 
 #[derive(Debug, Clone)]
